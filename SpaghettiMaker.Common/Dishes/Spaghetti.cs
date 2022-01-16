@@ -3,24 +3,35 @@
 public class Spaghetti : DishObject
 {
     public static int MaxAmount => 200;
-    public int AmountInGrams { get; set; }
-    public bool IsCooked { get; private set; } = false;
-    public static Spaghetti Cook(Pot pot, int amount)
+    public bool IsCooked { get; private set; }
+    public int AmountInGrams { get; private set; }
+    public Pot? Pot { get; set; }
+    public Spaghetti(Pot pot)
+    {
+        Pot = pot;
+    }
+    public static Task<Spaghetti> CookAsync(Pot pot, int amount)
     {
         if (pot is null)
             throw new ArgumentNullException(nameof(pot));
 
+        if (pot.IsHeated == false)
+            throw new ArgumentException("The pot is not heated", nameof(pot));
+
         if (amount > MaxAmount)
             throw new ArgumentOutOfRangeException(nameof(amount));
 
-        if (!pot.IsHeated)
-            pot.Heat();
-
-        Task.Delay(20_000).Wait();
-        var result = new Spaghetti() { AmountInGrams = amount };
-        result.IsCooked = true;
-
-        return result;
+        return Task.Run(() =>
+        {
+            Console.WriteLine("Cook spaghetti...");
+            Task.Delay(20_000).Wait();
+            Console.WriteLine("Spaghetti are ready");
+            return new Spaghetti(pot)
+            {
+                IsCooked = true,
+                AmountInGrams = amount,
+            };
+        });
     }
 }
 

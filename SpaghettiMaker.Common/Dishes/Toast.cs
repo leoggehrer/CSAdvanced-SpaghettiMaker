@@ -2,9 +2,20 @@
 
 public class Toast : DishObject
 {
-    public void ToastBread()
+    public bool IsToasted { get; private set; }
+
+    public static Task<Toast> ToastBreadAsync()
     {
-        Task.Delay(10_000).Wait();
+        return Task.Run(() =>
+        {
+            Console.WriteLine("Toasting bread...");
+            Task.Delay(10_000).Wait();
+            Console.WriteLine("Bread is ready");
+            return new Toast()
+            {
+                IsToasted = true,
+            };
+        });
     }
 }
 

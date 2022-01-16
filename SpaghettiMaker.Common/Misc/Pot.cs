@@ -2,11 +2,16 @@
 
 public class Pot
 {
-    public bool IsHeated { get; set; } = false;
-    public bool InUse { get; set; } = false;
-    public void Heat()
+    public bool IsHeated { get; private set; } = false;
+    public static Task<Pot> HeatAsync()
     {
-        Task.Delay(10_000).Wait();
-        IsHeated = true;
+        return Task.Run(() =>
+        {
+            Task.Delay(10_000).Wait();
+            return new Pot()
+            {
+                IsHeated = true
+            };
+        });
     }
 }

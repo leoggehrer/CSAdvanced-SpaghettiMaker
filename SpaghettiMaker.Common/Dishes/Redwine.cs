@@ -2,9 +2,20 @@
 
 public class Redwine : DishObject
 {
-    public void Pour()
+    public bool IsPoured { get; private set; }
+
+    public static Task<Redwine> PourAsync()
     {
-        Task.Delay(1000).Wait();
+        return Task.Run(() =>
+        {
+            Console.WriteLine("Pouring redwine...");
+            Task.Delay(1000).Wait();
+            Console.WriteLine("Redwine is ready!");
+            return new Redwine()
+            {
+                IsPoured = true,
+            };
+        });
     }
 }
 

@@ -2,8 +2,19 @@
 
 public class Water : DishObject
 {
-    public void Pour()
+    public bool IsPoured { get; private set; }
+
+    public static Task<Water> PourAsync()
     {
-        Task.Delay(1000).Wait();
+        return Task.Run(() =>
+        {
+            Console.WriteLine("Pouring water...");
+            Task.Delay(1000).Wait();
+            Console.WriteLine("Water is ready");
+            return new Water()
+            {
+                IsPoured = true,
+            };
+        });
     }
 }

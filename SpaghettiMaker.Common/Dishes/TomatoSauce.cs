@@ -3,23 +3,34 @@
 public class TomatoSauce : DishObject
 {
     public static int MaxAmount => 150;
-    public int AmountInGrams { get; set; }
-    public bool IsReady { get; set; }
-    public static TomatoSauce Cook(Pot pot, int amount)
+    public int AmountInGrams { get; private set; }
+    public bool IsWarmedUp { get; private set; }
+    public Pot? Pot { get; set; }
+    public TomatoSauce(Pot pot)
+    {
+        Pot = pot;
+    }
+    public static Task<TomatoSauce> CookAsync(Pot pot, int amount)
     {
         if (pot is null)
             throw new ArgumentNullException(nameof(pot));
 
+        if (pot.IsHeated == false)
+            throw new ArgumentException("The pot is not heated", nameof(pot));
+
         if (amount > MaxAmount)
             throw new ArgumentOutOfRangeException(nameof(amount), "max. 150g");
 
-        if (!pot.IsHeated)
-            pot.Heat();
-
-        Task.Delay(15_000).Wait();
-        var result = new TomatoSauce() { AmountInGrams = amount };
-        result.IsReady = true;
-
-        return result;
+        return Task.Run(() =>
+        {
+            Console.WriteLine("Cook sauce...");
+            Task.Delay(15_000).Wait();
+            Console.WriteLine("Sauce is ready");
+            return new TomatoSauce(pot)
+            {
+                IsWarmedUp = true,
+                AmountInGrams = amount
+            };
+        });
     }
 }
