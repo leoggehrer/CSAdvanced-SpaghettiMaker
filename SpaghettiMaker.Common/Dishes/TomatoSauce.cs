@@ -23,7 +23,7 @@ public class TomatoSauce : DishObject
 
         return Task.Run(() =>
         {
-            Console.WriteLine("Cook sauce...");
+            Console.WriteLine($"Cook {amount} g sauce...");
             Task.Delay(15_000).Wait();
             Console.WriteLine("Sauce is ready");
             return new TomatoSauce(pot)

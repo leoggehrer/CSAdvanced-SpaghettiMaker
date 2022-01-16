@@ -23,7 +23,7 @@ public class Spaghetti : DishObject
 
         return Task.Run(() =>
         {
-            Console.WriteLine("Cook spaghetti...");
+            Console.WriteLine($"Cook {amount} g spaghetti...");
             Task.Delay(20_000).Wait();
             Console.WriteLine("Spaghetti are ready");
             return new Spaghetti(pot)
