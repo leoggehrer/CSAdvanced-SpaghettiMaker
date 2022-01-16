@@ -7,7 +7,9 @@ public class Pot
     {
         return Task.Run(() =>
         {
+            Console.WriteLine("Heating Pot...");
             Task.Delay(10_000).Wait();
+            Console.WriteLine("Pot is ready");
             return new Pot()
             {
                 IsHeated = true
