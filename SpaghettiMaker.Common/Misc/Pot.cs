@@ -2,6 +2,7 @@
 
 public class Pot
 {
+    public bool InUse { get; set; }
     public bool IsHeated { get; private set; } = false;
     public static Task<Pot> HeatAsync()
     {

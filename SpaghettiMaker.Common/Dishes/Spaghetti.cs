@@ -15,6 +15,9 @@ public class Spaghetti : DishObject
         if (pot is null)
             throw new ArgumentNullException(nameof(pot));
 
+        if (pot.InUse)
+            throw new ArgumentException("The pot ist in use", nameof(pot));
+
         if (pot.IsHeated == false)
             throw new ArgumentException("The pot is not heated", nameof(pot));
 
@@ -24,7 +27,9 @@ public class Spaghetti : DishObject
         return Task.Run(() =>
         {
             Console.WriteLine($"Cook {amount} g spaghetti...");
+            pot.InUse = true;
             Task.Delay(20_000).Wait();
+            pot.InUse = false;
             Console.WriteLine("Spaghetti are ready");
             return new Spaghetti(pot)
             {

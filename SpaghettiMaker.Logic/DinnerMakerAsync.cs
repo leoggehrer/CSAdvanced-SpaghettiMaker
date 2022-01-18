@@ -6,10 +6,9 @@ public class DinnerMakerAsync
     public static async Task<IEnumerable<DishObject>> MakeAsync()
     {
         var result = new List<DishObject>();
-        var sauceAmount = 200;
-        var spaghettiAmount = 350;
         var potTasks = new List<Task<Pot>>();
-        var sauceOrSpaghettiTasks = new List<Task>();
+        var spaghettiOrSauceTasks = new List<Task>();
+        var sauceTasks = new List<Task>();
         var pourTasks = new List<Task>()
             {
                 Redwine.PourAsync(),
@@ -25,50 +24,17 @@ public class DinnerMakerAsync
         potTasks.Add(Pot.HeatAsync());
         potTasks.Add(Pot.HeatAsync());
         potTasks.Add(Pot.HeatAsync());
+        await Task.WhenAll(potTasks.ToArray());
+        
+        var pots = potTasks.Select(pt => pt.Result).ToArray();
 
-        while (sauceAmount > 0 || spaghettiAmount > 0)
-        {
-            var pot = default(Pot);
+        spaghettiOrSauceTasks.Add(Spaghetti.CookAsync(pots[0], 200));
+        spaghettiOrSauceTasks.Add(Spaghetti.CookAsync(pots[1], 150));
+        spaghettiOrSauceTasks.Add(TomatoSauce.CookAsync(pots[2], 150));
 
-            if (potTasks.Count > 0)
-            {
-                var pt = await Task.WhenAny(potTasks.ToArray());
+        Task.WaitAny(spaghettiOrSauceTasks.ToArray());
 
-                pot = pt.Result;
-                potTasks.Remove(pt);
-            }
-            else
-            {
-                var t = await Task.WhenAny(sauceOrSpaghettiTasks.ToArray());
-
-                if (t is Task<Spaghetti> st)
-                {
-                    pot = st.Result.Pot;
-                    result.Add(st.Result);
-                    sauceOrSpaghettiTasks.Remove(t);
-                }
-                else if (t is Task<TomatoSauce> tt)
-                {
-                    pot = tt.Result.Pot;
-                    result.Add(tt.Result);
-                    sauceOrSpaghettiTasks.Remove(t);
-                }
-            }
-            if (pot != null && spaghettiAmount > 0)
-            {
-                var amount = Math.Min(spaghettiAmount, 200);
-
-                spaghettiAmount -= amount;
-                sauceOrSpaghettiTasks.Add(Spaghetti.CookAsync(pot, amount));
-            }
-            else if (pot != null && sauceAmount > 0)
-            {
-                var amount = Math.Min(sauceAmount, 150);
-
-                sauceAmount -= amount;
-                sauceOrSpaghettiTasks.Add(TomatoSauce.CookAsync(pot, amount));
-            }
-        }
+        spaghettiOrSauceTasks.Add(TomatoSauce.CookAsync(pots.First(p => p.InUse == false), 50));
         await Task.WhenAll(pourTasks.ToArray());
         foreach (var task in pourTasks)
         {
@@ -83,8 +49,8 @@ public class DinnerMakerAsync
             if (task is Task<Toast> rt)
                 result.Add(rt.Result);
         }
-        await Task.WhenAll(sauceOrSpaghettiTasks.ToArray());
-        foreach (var task in sauceOrSpaghettiTasks)
+        await Task.WhenAll(spaghettiOrSauceTasks.ToArray());
+        foreach (var task in spaghettiOrSauceTasks)
         {
             if (task is Task<Spaghetti> st)
                 result.Add(st.Result);
