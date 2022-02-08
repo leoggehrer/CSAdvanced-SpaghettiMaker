@@ -15,7 +15,7 @@ Lernzielkontrolle:
 |---|---|
 |SpaghettiMaker.Common|In diesem Projekt sind die gemeinsamen Klassen wie Pot, Water, Redwine usw. implementiert.|
 |SpaghettiMaker.Logic|In diesem Projekt befinden sich die Klasse Spaghetti für die asynchrone Zubereitung des Essens.|
-|SpaghettiMaker.ConApp|Eine Konsolen-Anwendung zum Starten für dei Zubereitung der Spaghetti.|
+|SpaghettiMaker.ConApp|Eine Konsolen-Anwendung zum Starten für die Zubereitung der Spaghetti.|
 
 Verbinden Sie die Abhängigkeiten der einzelnen Projekte untereinander.
 
